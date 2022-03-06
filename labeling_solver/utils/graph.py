@@ -1,4 +1,5 @@
-from curses import mousemask
+import networkx as nx
+import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
 
 
@@ -8,7 +9,7 @@ class Graph:
 
         self.g: List[int] = []
         self.adj_list: Dict[int, Dict[int, int]] = {}
-        self.adj_binrep: List[int] = [0 for _ in range(size)]
+        self.adj_binrep: List[int] = [0 for _ in range(size+1)]
 
     def add_edge(self, u, v) -> None:
         if u not in self.g:
@@ -25,13 +26,20 @@ class Graph:
 
         self.adj_binrep[u] |= 1 << v
 
+
+    def draw_graph(self) -> None:
+        G = nx.Graph(self.adj_list)
+        nx.draw_networkx(G)
+        plt.show()
+
+
     def max_clique(self) -> Tuple[int, int]:
 
-        g_comp = [~self.adj_binrep[i] for i in self.g]
+        g_comp = [self.adj_binrep[i] ^ ((1 << (self.size))-1) for i in range(self.size)]
 
         max_clique_by_subset = [0 for _ in range(1 << self.size)]
 
-        half_size = self.size / 2
+        half_size = self.size // 2
         all_vertices_mask = (1 << self.size) - 1
 
         for mask in range(1 << half_size):
@@ -39,7 +47,7 @@ class Graph:
 
             for i in range(half_size):
                 if adjacency & (1 << i):
-                    adj &= g_comp[i]
+                    adjacency &= g_comp[i]
 
             if adjacency & mask == mask:
                 max_clique_by_subset[mask] = mask.bit_count()
@@ -73,12 +81,12 @@ class Graph:
         return max_clique, max_clique_number
 
     def mis(self) -> List[int]:
-        mis = list()
+        mis_vertices = list()
 
-        mis_size, mis = self.max_clique()
+        mis, mis_size = self.max_clique()
 
-        for i in range(1, self.size):
+        for i in range(0, self.size+1):
             if mis & (1 << i):
-                mis.append(i)
+                mis_vertices.append(i)
 
-        return mis
+        return mis_vertices

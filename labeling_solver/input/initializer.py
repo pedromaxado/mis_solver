@@ -15,9 +15,9 @@ def build_graph(problem_data: dict) -> Graph:
     g = Graph(g_size)
 
     for u in range(1, g_size+1):
-        u_adj = problem_data[u]
-        
+        u_adj = problem_data[str(u)]
+
         for v in u_adj:
-            g.add_edge(u, v)
+            g.add_edge(u-1, v-1)
 
     return g
