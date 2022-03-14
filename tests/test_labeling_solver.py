@@ -9,8 +9,9 @@ def test_version():
 
 
 def test_solve_labeling_problem():
-    example_file = "/home/pedro/Dropbox/Teste Mercado Livre/Q2/labeling-solver/tests/input001.json"
-
-    print(solve_labeling_problem(example_file))
+    current_dir = os.path.dirname(__file__)
+    example_file = "input001.json"
+    example_path = os.path.join(current_dir, example_file)
+    print(solve_labeling_problem(example_path))
 
     assert True
